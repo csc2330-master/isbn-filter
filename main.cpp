@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <sstream>
 
 /**
  * Things we have learned so far
@@ -12,22 +13,33 @@ using std::cout;
 using std::cerr;
 using std::endl;
 using std::ifstream;
+using std::ofstream;
+using std::stringstream;
 
 bool IsValidISBN(const string& isbn);
-
+string GetISBN(const string& text);
 int main() {
 	ifstream isbnFile("../data/isbn_mixed_list.txt");
 	if (!isbnFile.is_open()) {
-		cerr << "COULD NOT OPEN... DUH" << endl;
+		cerr << "COULD NOT OPEN Input File... DUH" << endl;
 		return 1;
 	}
+	ofstream validIsbn("../data/valid_isbn.txt");
+	if (!validIsbn.is_open()) {
+		cerr << "COULD NOT OPEN Output File... DUH" << endl;
+		return 1;
+	}
+
 	string str, isbn;
 	while (getline(isbnFile,str)) {
-		isbn = str.substr(0, 13);
+		//isbn = str.substr(0, 13);
+		//str.find() -- see Teams for code about parsing with find and substr
+		isbn = GetISBN(str);
 		if (IsValidISBN(isbn)) {
-			cout << "ISBN " << isbn << " is valid" << endl;
+			// cout << "ISBN " << isbn << " is valid" << endl;
+			validIsbn << str << endl;
 		}else {
-			cout << "ISBN " << isbn << " is NOT valid" << endl;
+			// cout << "ISBN " << isbn << " is NOT valid" << endl;
 		}
 
 	}
@@ -58,4 +70,10 @@ bool IsValidISBN(const string& isbn) {
 	return false;
 }
 
+string GetISBN(const string& text) {
+	stringstream ss(text);
+	string retVal;
+	getline(ss, retVal, ';');
+	return retVal;
+}
 
